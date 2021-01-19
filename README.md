@@ -23,7 +23,7 @@ The outcome is a set of tables linked to each other (snowflake schema)to make it
 
 ## Data model
 The data model includes seven tables, being five of them dimensions and two facts.
-[ERD](ERD-Amsterdam-AirBnB.png)
+![ERD-Amsterdam-AirBnB](https://user-images.githubusercontent.com/47854692/105017008-9db31500-5a43-11eb-9f33-37bcef0af1f5.png)
 
 ## Technology and tools
 The dataset is not yet considered as big data, it can be processed with pandas, however the running time would be longer than using a EMR cluster with spark running on top of it.
