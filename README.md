@@ -22,8 +22,114 @@ The purpose of the project is to build an ETL pipeline that reads data from Amaz
 The outcome is a set of tables linked to each other (snowflake schema)to make it easier for BI applications to make use of the data ( sql is always easier to run analytics than other frameworks).
 
 ## Data model
+#### ERD
 The data model includes seven tables, being five of them dimensions and two facts.
 ![ERD-Amsterdam-AirBnB](https://user-images.githubusercontent.com/47854692/105017008-9db31500-5a43-11eb-9f33-37bcef0af1f5.png)
+
+#### Data Dictionary 
+
+`date_time` : dimension table about the date-time
+
+| Column's name | type | example | 
+| --- | --- | --- |
+| date  | date `PRIMARY KEY` | (2019, 7, 30) |
+| day_of_month | integer | 30 |
+| week | integer | 1 |
+| month | integer | 7 |
+| year | integer | 2019 |
+| day | varchar | 'Tuesday' |
+
+
+`location` : dimension table about hosts
+
+| Column's name | type | example | 
+| --- | --- | --- |
+| location_id  | integer `PRIMARY KEY`| 33 |
+| latitude | float | 52.296070098877 |
+| longitude | float | 4.99365091323853 |
+| street | varchar | 'Amsterdam-Zuidoost, Noord-Holland, Netherlands' |
+| zipcode | varchar | '1107' |
+| city | varchar | 'Amsterdam-Zuidoost |
+| country | varchar | 'Netherlands' |
+
+
+`hosts` : dimension table about hosts
+
+| Column's name | type | example | 
+| --- | --- | --- |
+| host_id  | integer `PRIMARY KEY`| 3552086 | 
+| host_name | varchar | 'Dennie' |
+| host_about | varchar | "World traveller, born and raised in the hospitable South of the Netherlands, but nowadays at home in one of Amsterdam's most famous neighborhoods: de Jordaan. I work in HR for a sportswear brand, and am interested in people, places, music, history and politics; my sport is running.\r\nAn AirBnB user for many years, my better half Elske and I are happy to share a room in our recently renovated home with travelers interested in our lovely city of Amsterdam. We hope to meet you soon!" |
+| host_response_time | varchar | 'within an hour' |
+| host_response_rate | float | 100.0 |
+| host_is_superhost | boolean | True |
+| host_location | varchar | 'Amsterdam, Noord-Holland, The Netherlands' |
+| host_identity_verified | boolean | True |
+
+
+`reviewers` : dimension table about reviewers
+
+| Column's name | type | example |
+| --- | --- | --- |
+| reviewer_id  | integer `PRIMARY KEY`| 99431047 | 
+| reviewer_name | varchar |'Madeleine' | 
+
+
+`listings` : dimension table about listings
+
+| Column's name | type | example |  
+| --- | --- | --- |
+| id  | integer `PRIMARY KEY`  | 26246938 |
+| host_id  | integer  `FOREIGN KEY` references to `host_id` in hosts table| 2945351 |
+| location_id  | integer `FOREIGN KEY` references to `location_id` in location table| 926 |
+| price | float | 135.0 |
+| weekly_price | float | None| 
+| monthly_price  | float |  None |
+| security_deposit | float | 250.0 |
+| cleaning_fee | float |  60.0 |
+| guests_included | float | 2.0 |
+| extra_people| float | 0.0 |
+| listing_url | varchar | 'https://www.airbnb.com/rooms/26246938' |
+| property_type | varchar | 'Apartment' |
+| accommodates | integer | 2 |
+| room_type | varchar | 'Entire home/apt' |
+| bathrooms | float | 1.5 |
+| bedrooms | float | 3.0 |
+| beds | float | 3.0|
+| amenities | varchar | '{TV,Wifi,Kitchen,"Paid parking off premises",Heating,Washer,Dryer,"Smoke detector","Fire extinguisher",Essentials,Hangers,"Hair dryer",Iron,"Outlet covers",Bathtub,"Baby bath","Changing table","High chair","Stair gates","Children’s books and toys","Babysitter recommendations",Crib,"Room-darkening shades","Children’s dinnerware","Bed linens",Microwave,"Coffee maker",Refrigerator,Dishwasher,"Dishes and silverware","Cooking basics",Oven,Stove,"Patio or balcony","Garden or backyard","Wide clearance to bed"}' |
+| bed_type | varchar | 'Real Bed' |   
+| review_scores_rating| float | 90.0 |
+| review_scores_accuracy | float | 9.0 |
+| review_scores_cleanliness | float | 8.0 |
+| review_scores_location | float | 9.0 |
+| review_scores_value | float | 8.0 |
+| cancellation_policy | varchar | 'strict_14_with_grace_period' |
+| require_guest_profile_picture | boolean | False | 
+| require_guest_phone_verification | boolean | False |
+
+
+`calendar` : fact table about calendar
+
+| Column's name | type | example |
+| --- | --- | --- |
+| calendar_id | integer `PRIMARY KEY`| 7 |
+| listing_id | integer `FOREIGN KEY` references to `id` in listings table| 2818 |
+| date | date `FOREIGN KEY` references to `date` in date_time table| (2018, 12, 12) |
+| available | boolean | True |
+| price | float | 59.0) |
+
+`reviews` : fact table about reviews
+
+| Column's name | type | example |
+| --- | --- | --- |
+| id | integer `PRIMARY KEY`| 9131 |
+| listing_id | integer `FOREIGN KEY` references to `id` in listings table| 2818 |
+| date | date `FOREIGN KEY` references to `date` in date_time table| (2009, 9, 6) |
+| reviewer_id | integer `FOREIGN KEY` references to `reviewer_id` in reviewers table | 26343 |
+| comments | varchar | 'You can´t have a nicer start in Amsterdam. Daniel is such a great and welcoming host. The room was really light and charming, so well decorated. Daniel has a great sense of hospitality, he even helped with our luggage and gave us maps and a travelguide. He´s very open minded and helpful. We had a great time, we would stay with him again anytime we´re back in Amsterdam. Daniel made sure we had everything for a great trip, thanks again for the bikes! Hope to see you soon, Daniel!' |
+
+
+
 
 ## Technology and tools
 The dataset is not yet considered as big data, it can be processed with pandas, however the running time would be longer than using a EMR cluster with spark running on top of it.
